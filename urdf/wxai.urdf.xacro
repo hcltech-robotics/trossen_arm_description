@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="wxai" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <!-- Robot Arguments -->
   <xacro:arg name="variant"                         default="base"/>        <!-- 'base', 'leader', 'follower' -->
   <xacro:arg name="arm_side"                        default=""/>            <!-- '', 'left', 'right' -->
   <xacro:arg name="prefix"                          default=""/>
@@ -8,6 +9,16 @@
   <xacro:arg name="ros2_control_hardware_type"      default="real"/>        <!-- 'real', 'mock_components' -->
   <xacro:arg name="ip_address"                      default="192.168.1.2"/>
   <xacro:arg name="base_link_frame"                 default="base_link"/>
+
+  <!-- Camera Arguments -->
+  <xacro:arg name="launch_camera" default="false" />
+  <xacro:arg name="camera_type" default="realsense" />
+  <xacro:arg name="camera_pos_x" default="0.4" />
+  <xacro:arg name="camera_pos_y" default="0.0" />
+  <xacro:arg name="camera_pos_z" default="0.68" />
+  <xacro:arg name="camera_pos_roll" default="0.0" />
+  <xacro:arg name="camera_pos_pitch" default="1.57079633" />
+  <xacro:arg name="camera_pos_yaw" default="3.14159265" />
 
   <xacro:if value="$(arg use_world_frame)">
     <link name="world"/>
@@ -30,5 +41,21 @@
     prefix="$(arg prefix)"
     ros2_control_hardware_type="$(arg ros2_control_hardware_type)"
     ip_address="$(arg ip_address)"/>
+
+  <!-- Include the camera holder macro -->
+  <xacro:if value="$(eval launch_camera)">
+      <xacro:include filename="$(find trossen_arm_description)/urdf/macros/camera_with_stand.xacro"/>
+      <xacro:camera_with_stand camera_pos_z="$(arg camera_pos_z)" 
+                                camera_roll="$(arg camera_pos_roll)" camera_pitch="$(arg camera_pos_pitch)" camera_yaw="$(arg camera_pos_yaw)" 
+                                camera_type="$(arg camera_type)" />
+
+      <!-- Connect camera to robot base -->
+      <joint name="base_link_camera_mount_joint" type="fixed">
+          <parent link="base_link"/>
+          <child link="camera_mount_link"/>
+          <origin xyz="$(arg camera_pos_x) $(arg camera_pos_y) $(arg camera_pos_z)" 
+                  rpy="0 0 0"/>
+      </joint>
+  </xacro:if>
 
 </robot>
