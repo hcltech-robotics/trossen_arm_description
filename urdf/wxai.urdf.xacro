@@ -2,23 +2,26 @@
 <robot name="wxai" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- Robot Arguments -->
-  <xacro:arg name="variant"                         default="base"/>        <!-- 'base', 'leader', 'follower' -->
-  <xacro:arg name="arm_side"                        default=""/>            <!-- '', 'left', 'right' -->
-  <xacro:arg name="prefix"                          default=""/>
-  <xacro:arg name="use_world_frame"                 default="false"/>       <!-- 'true', 'false' -->
-  <xacro:arg name="ros2_control_hardware_type"      default="real"/>        <!-- 'real', 'mock_components' -->
-  <xacro:arg name="ip_address"                      default="192.168.1.2"/>
-  <xacro:arg name="base_link_frame"                 default="base_link"/>
+  <xacro:arg name="variant"                    default="base"/>        <!-- 'base', 'leader', 'follower' -->
+  <xacro:arg name="arm_side"                   default=""/>            <!-- '', 'left', 'right' -->
+  <xacro:arg name="prefix"                     default=""/>
+  <xacro:arg name="use_world_frame"            default="false"/>       <!-- 'true', 'false' -->
+  <xacro:arg name="ros2_control_hardware_type" default="real"/>        <!-- 'real', 'mock_components' -->
+  <xacro:arg name="ip_address"                 default="192.168.1.2"/>
+  <xacro:arg name="base_link_frame"            default="base_link"/>
 
   <!-- Camera Arguments -->
-  <xacro:arg name="launch_camera" default="false" />
-  <xacro:arg name="camera_type" default="realsense" />
-  <xacro:arg name="camera_pos_x" default="0.4" />
-  <xacro:arg name="camera_pos_y" default="0.0" />
-  <xacro:arg name="camera_pos_z" default="0.68" />
-  <xacro:arg name="camera_pos_roll" default="0.0" />
-  <xacro:arg name="camera_pos_pitch" default="1.57079633" />
-  <xacro:arg name="camera_pos_yaw" default="3.14159265" />
+  <xacro:arg name="launch_camera"       default="false" />
+  <xacro:arg name="camera_type"         default="realsense" />
+  <xacro:arg name="camera_pos_x"        default="0.4" />
+  <xacro:arg name="camera_pos_y"        default="0.0" />
+  <xacro:arg name="camera_pos_z"        default="0.68" />
+  <xacro:arg name="camera_pos_roll"     default="0.0" />
+  <xacro:arg name="camera_pos_pitch"    default="1.57079633" />
+  <xacro:arg name="camera_pos_yaw"      default="3.14159265" />
+  <xacro:arg name="camera_holder_roll"  default="0.0" />
+  <xacro:arg name="camera_holder_pitch" default="0.0" />
+  <xacro:arg name="camera_holder_yaw"   default="0.0" />
 
   <xacro:if value="$(arg use_world_frame)">
     <link name="world"/>
@@ -50,11 +53,11 @@
                                 camera_type="$(arg camera_type)" />
 
       <!-- Connect camera to robot base -->
-      <joint name="base_link_camera_mount_joint" type="fixed">
-          <parent link="base_link"/>
+      <joint name="$(arg prefix)base_link_camera_mount_joint" type="fixed">
+          <parent link="$(arg prefix)base_link"/>
           <child link="camera_mount_link"/>
           <origin xyz="$(arg camera_pos_x) $(arg camera_pos_y) $(arg camera_pos_z)" 
-                  rpy="0 0 0"/>
+                  rpy="$(arg camera_holder_roll) $(arg camera_holder_pitch) $(arg camera_holder_yaw)"/>
       </joint>
   </xacro:if>
 
